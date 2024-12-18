@@ -1,27 +1,30 @@
 package Model.BEAN;
 
+import java.sql.Timestamp;
+
 public class User {
     private int userId;
     private String username;
     private String password;
-    private String role;
     private String email;
-    private String phone;
+    private String phoneNumber;
+    private String firstname;  // New field
+    private String lastname;   // New field
+    private Timestamp createdAt;
 
-    // Default constructor
     public User() {}
 
-    // Parameterized constructor
-    public User(int userId, String username, String password, String role, String email, String phone) {
+    public User(int userId, String username, String password, String email, String phoneNumber, String firstname, String lastname, Timestamp createdAt) {
         this.userId = userId;
         this.username = username;
         this.password = password;
-        this.role = role;
         this.email = email;
-        this.phone = phone;
+        this.phoneNumber = phoneNumber;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.createdAt = createdAt;
     }
 
-    // Getters and setters
     public int getUserId() {
         return userId;
     }
@@ -46,14 +49,6 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -62,11 +57,35 @@ public class User {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+	public String getFirstname() {
+		return firstname;
+	}
 }

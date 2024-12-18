@@ -14,8 +14,7 @@ public class Job {
     private Date postedAt;
     private int clientId;
 
-    // Default constructor
-    public Job() {}
+ 
 
     public Job(int jobId, String title, String description, String companyName, String location, String salary, Date deadline, Date postedAt, int clientId) {
         this.jobId = jobId;

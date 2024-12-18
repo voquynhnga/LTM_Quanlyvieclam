@@ -25,6 +25,11 @@ public class CheckLoginBO {
 	}
 
 
+	public int getUserId(String username) throws ClassNotFoundException, SQLException {
+		return dao.getUserIdByUsername(username);
+	}
+
+
 
 
 }

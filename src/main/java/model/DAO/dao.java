@@ -13,18 +13,21 @@ import Model.BEAN.Job;
 public class dao {
 
 	public boolean addNew(Job job) throws ClassNotFoundException, SQLException {
-	    String getMaxIdSql = "SELECT COALESCE(MAX(jobId), 0) + 1 AS nextId FROM job";
-	    String insertSql = "INSERT INTO job (jobId, title, description, company, location, salary, deadline, postedAt, clientId) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+	    String insertSql = "INSERT INTO job (jobId, title, description, company, location, salary, deadline, postedAt, clientId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	    try (Connection conn = DBConnection.getConnection();
-	         PreparedStatement getMaxIdStmt = conn.prepareStatement(getMaxIdSql);
 	         PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
 
-	        ResultSet rs = getMaxIdStmt.executeQuery();
-	        int jobId = 1; 
-	        if (rs.next()) {
-	            jobId = rs.getInt("nextId");
-	        }
+	        int jobId = getMaxId();
+	        
+	        System.out.println("Job ID: " + jobId);
+	        System.out.println("Title: " + job.getTitle());
+	        System.out.println("Description: " + job.getDescription());
+	        System.out.println("Company Name: " + job.getCompanyName());
+	        System.out.println("Location: " + job.getLocation());
+	        System.out.println("Salary: " + job.getSalary());
+	        System.out.println("Deadline: " + job.getDeadline());
+	        System.out.println("Posted At: " + job.getPostedAt());
 
 	        insertStmt.setInt(1, jobId);
 	        insertStmt.setString(2, job.getTitle());
@@ -32,14 +35,29 @@ public class dao {
 	        insertStmt.setString(4, job.getCompanyName());
 	        insertStmt.setString(5, job.getLocation());
 	        insertStmt.setString(6, job.getSalary());
-	        insertStmt.setDate(7, job.getDeadline()); 
-	        insertStmt.setDate(8, job.getPostedAt()); 
-	        insertStmt.setString(9, getMaxIdSql);
+	        insertStmt.setDate(7, new java.sql.Date(job.getDeadline().getTime()));
+	        insertStmt.setDate(8, new java.sql.Date(job.getPostedAt().getTime()));
+	        insertStmt.setInt(9, job.getClientId()); 
 
 	        int rowsAffected = insertStmt.executeUpdate();
 	        return rowsAffected > 0;
 	    }
 	}
+
+	
+	public int getMaxId() throws SQLException, ClassNotFoundException {
+	    String getMaxIdSql = "SELECT COALESCE(MAX(jobId), 0) + 1 AS nextId FROM job";
+	    try (Connection conn = DBConnection.getConnection();
+	         PreparedStatement getMaxIdStmt = conn.prepareStatement(getMaxIdSql);
+	         ResultSet rs = getMaxIdStmt.executeQuery()) {
+	        
+	        if (rs.next()) {
+	            return rs.getInt("nextId");
+	        }
+	    }
+	    return 1; 
+	}
+
 
 
     public boolean isExist(String jobTitle, String description, String company) throws SQLException, ClassNotFoundException {
@@ -75,21 +93,20 @@ public class dao {
             if (field != null && !field.isEmpty() && value != null && !value.isEmpty()) {
                 stmt.setString(1, "%" + value.trim() + "%");
             }
-            
-            
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Job job = new Job();
-                job.setTitle(rs.getString("title"));
-                job.setCompanyName(rs.getString("company"));
-                job.setSalary(rs.getString("salary"));
-                job.setDescription(rs.getString("description"));
-                job.setLocation(rs.getString("location"));
-                job.setDeadline(rs.getDate("deadline"));
-                job.setPostedAt(rs.getDate("postedAt"));
-                job.setClientId(1);
-                
+                Job job = new Job(
+                	rs.getInt("jobId"),
+                    rs.getString("title"),
+                    rs.getString("description"),
+                    rs.getString("company"),
+                    rs.getString("location"),
+                    rs.getString("salary"),
+                    rs.getDate("deadline"),
+                    rs.getDate("postedAt"),
+                    rs.getInt("clientId")
+                );
 
                 resultList.add(job);
             }
@@ -98,6 +115,7 @@ public class dao {
 
         return resultList;
     }
+
 
     public Job getByID(int id) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM job WHERE jobId = ?";
@@ -110,16 +128,17 @@ public class dao {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                job = new Job();
-                job.setJobId(rs.getInt("jobId"));
-                 job.setTitle(rs.getString("title"));
-                 job.setDescription(rs.getString("description"));
-                 job.setCompanyName(rs.getString("company"));
-                 job.setLocation(rs.getString("location"));
-                 job.setSalary(rs.getString("salary"));
-                 job.setDeadline(rs.getDate("deadline"));
-                 job.setPostedAt(rs.getDate("postedAt"));
-                    
+            	  job = new Job(
+                      	rs.getInt("jobId"),
+                          rs.getString("title"),
+                          rs.getString("description"),
+                          rs.getString("company"),
+                          rs.getString("location"),
+                          rs.getString("salary"),
+                          rs.getDate("deadline"),
+                          rs.getDate("postedAt"),
+                          rs.getInt("clientId")
+                      );
                 
             }
         }
@@ -127,27 +146,25 @@ public class dao {
         return job;
     }
 
-    public boolean update(Job job) throws SQLException, ClassNotFoundException {
-        String sql = "UPDATE job SET title = ?, description = ?, company = ?, location = ?, salary = ?, deadline = ?, postedAt = ? WHERE jobId = ?";
+    public boolean update(int jobId, String title, String company, String salary, String description, String location, Date deadline) throws SQLException, ClassNotFoundException {
+        String updateSql = "UPDATE job SET title = ?, company = ?, salary = ?, description = ?, location = ?, deadline = ? WHERE jobId = ?";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(updateSql)) {
 
-            stmt.setString(1, job.getTitle());
-            stmt.setString(4, job.getDescription());
-
-            stmt.setString(2, job.getCompanyName());
-            stmt.setString(5, job.getLocation());
-
-            stmt.setString(3, job.getSalary());
-            stmt.setDate(6, (job.getDeadline()));
-            stmt.setDate(7, job.getPostedAt());
-            stmt.setInt(8, job.getJobId());
+            stmt.setString(1, title);
+            stmt.setString(2, company);
+            stmt.setString(3, salary);
+            stmt.setString(4, description);
+            stmt.setString(5, location);
+            stmt.setDate(6, deadline);
+            stmt.setInt(7, jobId);
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         }
     }
+
     public boolean delete(int id) throws SQLException, ClassNotFoundException {
         String sql = "DELETE FROM job WHERE jobId = ?";
 

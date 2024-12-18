@@ -31,6 +31,33 @@ public class CheckLoginDAO {
 	    }
 	}
 	
+	public int getUserIdByUsername(String username) throws ClassNotFoundException, SQLException {
+	    String query;
+	    
+	    if (username.contains("@gmail.com")) {
+	        query = "SELECT userId FROM user WHERE email = ?";
+	    } else {
+	        query = "SELECT userId FROM user WHERE username = ?";
+	    }
+	    
+	    try (Connection conn = DBConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(query)) {
+	        
+	        pstmt.setString(1, username);
+	        ResultSet rs = pstmt.executeQuery();
+	        
+	        if (rs.next()) {
+	            return rs.getInt("userId");
+	        } else {
+	            return -1; 
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return -1; 
+	    }
+	}
+
+	
 	public int getRoleIdByUserId(String username) throws ClassNotFoundException, SQLException {
 	    String query1;  
 	    if(username.contains("@gmail.com")) {
@@ -91,16 +118,17 @@ public class CheckLoginDAO {
             PreparedStatement pstmt = conn.prepareStatement(query);
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()) {
-            	Job job = new Job();
-            	job.setJobId(rs.getInt("jobId"));
-            	job.setTitle(rs.getString("title"));
-            	job.setDescription(rs.getString("description"));
-            	job.setCompanyName(rs.getString("company"));
-            	job.setLocation(rs.getString("location"));
-            	job.setSalary(rs.getString("salary"));
-            	job.setDeadline(rs.getDate("deadline"));
-            	job.setPostedAt(rs.getDate("postedAt"));
-            	job.setClientId(rs.getInt("clientId"));
+            	  Job job = new Job(
+                      	rs.getInt("jobId"),
+                          rs.getString("title"),
+                          rs.getString("description"),
+                          rs.getString("company"),
+                          rs.getString("location"),
+                          rs.getString("salary"),
+                          rs.getDate("deadline"),
+                          rs.getDate("postedAt"),
+                          rs.getInt("clientId")
+                      );
             	result.add(job);
             }
             System.out.println("DAO" + result);

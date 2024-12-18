@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import Model.BEAN.Job;
+import Model.BEAN.User;
 import Model.BO.CheckLoginBO;
+import Model.BO.UserBO;
 
 @WebServlet("/CheckLoginServlet")
 public class CheckLoginServlet extends HttpServlet {
@@ -34,22 +36,26 @@ public class CheckLoginServlet extends HttpServlet {
         System.out.println(username);
 
         CheckLoginBO checkLoginBO = new CheckLoginBO();
+        UserBO userBO = new UserBO();
         ArrayList<Job> JobArray = null;
         int RoleUser = -1;
+        int UserId = -1;
 
         try {
-
-//
-//            if (username == null || username.isEmpty() || password == null || password.isEmpty() || em) {
-//                request.setAttribute("errorMessage", "Tên đăng nhập và mật khẩu không được để trống.");
-//            } else 
+ 
         	if (checkLoginBO.isValidUser(username, password)) {
                 JobArray = checkLoginBO.getAllJobList();
                 RoleUser = checkLoginBO.getRole(username);
+                UserId = checkLoginBO.getUserId(username);
+                User user = userBO.getUserById(UserId); 
                 
                 HttpSession session = request.getSession();
                 session.setAttribute("JobArray", JobArray);
                 session.setAttribute("Role", RoleUser);
+                session.setAttribute("UserId", UserId);
+                session.setAttribute("user", user);
+
+
                 
                 System.out.println("Role " + RoleUser);
                 des = "/layouts/decorator.jsp";

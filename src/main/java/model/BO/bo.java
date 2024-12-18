@@ -1,5 +1,6 @@
 package Model.BO;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +23,16 @@ public class bo {
 	 public Job getByID(int id) throws SQLException, ClassNotFoundException {
 		 return dao.getByID(id);
 	 }
-	 public boolean update(Job Job) throws SQLException, ClassNotFoundException {
-		 return dao.update(Job);
+	 public boolean update(int jobId, String title, String company, String salary, String description, String location, Date deadline) throws SQLException, ClassNotFoundException {
+		 return dao.update(jobId, title,company,  salary, description,  location,deadline);
 	 }
 	 
 
 	public boolean delete(int JobID) throws ClassNotFoundException, SQLException {
 		return dao.delete(JobID);
+	}
+	public int getMaxId() throws ClassNotFoundException, SQLException {
+		
+		return dao.getMaxId();
 	}
 }
