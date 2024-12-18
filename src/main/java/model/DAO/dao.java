@@ -75,6 +75,8 @@ public class dao {
             if (field != null && !field.isEmpty() && value != null && !value.isEmpty()) {
                 stmt.setString(1, "%" + value.trim() + "%");
             }
+            
+            
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -86,16 +88,19 @@ public class dao {
                 job.setLocation(rs.getString("location"));
                 job.setDeadline(rs.getDate("deadline"));
                 job.setPostedAt(rs.getDate("postedAt"));
+                job.setClientId(1);
+                
 
                 resultList.add(job);
             }
+            System.out.println(resultList);
         }
 
         return resultList;
     }
 
     public Job getByID(int id) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT * FROM jobs WHERE id = ?";
+        String sql = "SELECT * FROM job WHERE jobId = ?";
         Job job = null;
 
         try (Connection conn = DBConnection.getConnection();
