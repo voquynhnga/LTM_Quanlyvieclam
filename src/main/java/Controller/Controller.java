@@ -165,7 +165,7 @@ public class Controller extends HttpServlet {
 
             try {
                 jobList = jobBO.getAll(searchType, searchKeyword);
-                request.setAttribute("List", jobList);
+                request.setAttribute("JobArray", jobList);
                 request.getRequestDispatcher("/layouts/decorator.jsp").forward(request, response);
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();

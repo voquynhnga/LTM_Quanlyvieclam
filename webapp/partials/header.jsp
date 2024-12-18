@@ -46,14 +46,23 @@
                             </li>
                         </ul>
                     <% } %>
-					<form class="form-inline mr-auto" target="_self">
+					<form class="form-inline mr-auto" method="POST" action="/LTM_BTH/Controller" action = "search">
+					    <div class="form-group">
+					        <label for="search-field"><i class="fa fa-search"></i></label>
+					        <input class="form-control search-field" type="search" name="searchKeyword" id="search-field">
+					    </div>
 					
-							<div class="form-group">
-								<label for="search-field"><i class="fa fa-search"></i></label><input
-									class="form-control search-field" type="search" name="search"
-									id="search-field">
-							</div>
+					    <div class="form-group ml-2">
+					        <select name="searchType" id="search-option" class="form-control">
+					            <option value="title">Title</option>
+					            <option value="company">Company</option>
+					            <option value="location">Location</option>
+					        </select>
+					    </div>
+					
+					    <button type="submit" class="btn btn-primary ml-2">Tìm kiếm</button>
 					</form>
+
 					
 				<div class='notification-container'>
          
@@ -90,6 +99,20 @@
 			}
 		});
 	</script>
+	
+	<script>
+    document.getElementById("search-field").addEventListener("input", function() {
+        var searchQuery = document.getElementById("search-field").value;
+        var searchOption = document.getElementById("search-option").value;
+
+        fetch('/Controller?search=' + searchQuery + '&searchOption=' + searchOption)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            });
+    });
+</script>
+	
 
 
 
