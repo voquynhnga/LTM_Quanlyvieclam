@@ -166,20 +166,9 @@
 </head>
 <body>
 
-<div class="account-img" style="background-image: url('/views/clients/assets/img/account_background.jpg');">
-  <div class="overlay">
-  </div>
-  <div class="profile-pic">
-    <img src="<%= request.getContextPath() %>/views/clients/assets/img/default-avatar2.png" alt="Profile Picture">
-    <label for="avatar-upload" class="upload-btn"><i class="fas fa-camera"></i></label>
-    <input type="file" id="avatar-upload" name="avatar" accept="image/*" style="display:none;">
+<img class="account-img" src ="assets/img/account_background.jpg">
 
-  </div>
-  <div class="profile-inf">
-    <p class="text-white center">mail@gmail.com</p>
-  </div>
-
-</div>
+<img>
 
 
 
