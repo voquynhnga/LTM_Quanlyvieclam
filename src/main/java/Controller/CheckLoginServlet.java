@@ -4,6 +4,7 @@ package Controller;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -38,6 +39,7 @@ public class CheckLoginServlet extends HttpServlet {
         CheckLoginBO checkLoginBO = new CheckLoginBO();
         UserBO userBO = new UserBO();
         ArrayList<Job> JobArray = null;
+        List<User> UserArray = null;
         int RoleUser = -1;
         int UserId = -1;
 
@@ -47,12 +49,14 @@ public class CheckLoginServlet extends HttpServlet {
                 JobArray = checkLoginBO.getAllJobList();
                 RoleUser = checkLoginBO.getRole(username);
                 UserId = checkLoginBO.getUserId(username);
+                UserArray = userBO.getAllUsers();
                 User user = userBO.getUserById(UserId); 
                 
                 HttpSession session = request.getSession();
                 session.setAttribute("JobArray", JobArray);
                 session.setAttribute("Role", RoleUser);
                 session.setAttribute("UserId", UserId);
+                session.setAttribute("UserArray", UserArray);
                 session.setAttribute("user", user);
 
 

@@ -20,7 +20,10 @@ public class UserDAO {
 
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
-        String query = "SELECT * FROM user";  // Đảm bảo bảng 'user' chính xác
+        String query = "SELECT u.userId, u.username, u.password, u.email, u.phoneNumber, u.firstname, u.lastname, u.createdAt " +
+                       "FROM user u " +
+                       "JOIN user_role ur ON u.userId = ur.userId " +
+                       "WHERE ur.roleId <> 1"; 
 
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
@@ -34,6 +37,7 @@ public class UserDAO {
                 String firstname = rs.getString("firstname");
                 String lastname = rs.getString("lastname");
                 Timestamp createdAt = rs.getTimestamp("createdAt"); 
+                
                 userList.add(new User(userId, username, password, email, phoneNumber, firstname, lastname, createdAt));
             }
         } catch (SQLException e) {
@@ -43,16 +47,26 @@ public class UserDAO {
         return userList;
     }
 
-    public void deleteUser(int userId) {
-        String query = "DELETE FROM user WHERE userId = ?"; 
 
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
+    public void deleteUser(int userId) {
+        String deleteJobsQuery = "DELETE FROM job WHERE clientId = ?"; 
+        
+        String deleteUserQuery = "DELETE FROM user WHERE userId = ?"; 
+
+        try (
+            PreparedStatement deleteJobsStmt = connection.prepareStatement(deleteJobsQuery);
+            PreparedStatement deleteUserStmt = connection.prepareStatement(deleteUserQuery)
+        ) {
+            deleteJobsStmt.setInt(1, userId);
+            deleteJobsStmt.executeUpdate();
+
+            deleteUserStmt.setInt(1, userId);
+            deleteUserStmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     public User getUserById(int userId) {
         User user = null;

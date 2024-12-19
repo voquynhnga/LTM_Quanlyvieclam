@@ -47,7 +47,7 @@ public class Controller extends HttpServlet {
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
                 request.setAttribute("message", "Lỗi khi lấy Job ID: " + e.getMessage());
-                des = "/error.jsp"; // Chuyển hướng tới trang lỗi
+                des = "/error.jsp";
                 RequestDispatcher rd = getServletContext().getRequestDispatcher(des);
                 rd.forward(request, response);
                 return;

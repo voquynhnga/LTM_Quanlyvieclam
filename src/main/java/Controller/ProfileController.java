@@ -64,13 +64,13 @@ public class ProfileController extends HttpServlet {
 					result = userBO.updateUser(user);
 					if (result) {
 					    session.setAttribute("user", user);
-
 					    request.setAttribute("message", "Cập nhật thành công!");
+				
 					    RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/user/account.jsp");
 					    rd.forward(request, response);
 					} else {
 					    request.setAttribute("message", "Cập nhật thất bại!");
-					    RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/user/account.jsp");
+					    RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/error/error.jsp");
 					    rd.forward(request, response);
 					}
 				} catch (SQLException e) {
